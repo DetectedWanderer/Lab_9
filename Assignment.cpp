@@ -49,8 +49,8 @@ int main() {
             successfulHit = true;
         } 
         else if (choice == 2) {
-            displaySpellBanner("Lightning Storm", "Adept", 2);
-            damageDealt = castSpell("Lightning Storm", 30, 1.4);
+            displaySpellBanner("Fireball", "Adept", 2);
+            damageDealt = castSpell("Fireball", 30, 1.4);
             consumeMana(15);           // Custom mana cost
             successfulHit = true;
         } 
@@ -88,26 +88,22 @@ int main() {
     return 0;
 }
 
-
+// Display yourself casting a spell
 void displaySpellBanner( string spellName, string tier, int chargeLevel){
     cout << "V=== CASTING SPELL ===V\n";
     cout << "Spell: " << spellName << "\n";
     cout << "Tier: " << tier << "\n";
     cout << "Charge Level: " << chargeLevel << "\n\n";
 }
-/*This function will take default arguments for all fields–spellName (a weak spell of your choice), basePower (your choice) and multiplier (default will be 1).
-The purpose of the function is to print the attack summary and calculate the total damage (basePower * multiplier) and return it as a double.
-*/
+// spell casting
 double castSpell( string spellName, int basePower, double multiplier){
     cout << "Casting " << spellName << "!\n";
     cout << "Base Power: " << basePower << "\n";
     cout << "Multiplier: " << multiplier << "\n";
     return basePower * multiplier;
 }
-/*This function will take default arguments for baseShield (15) and absorptionRate(.2).
-The purpose of this function is to calculate the absorbed damage (baseShield * (1+ absorptionRate).  
-It should return total ward value as a double.
-*/
+
+//defenseive actions function 
 double calculateShield(double baseShield, double absorptionRate){
     cout << "Calculating Ward...\n";
     cout << "Base Shield: " << baseShield << "\n";
@@ -115,7 +111,7 @@ double calculateShield(double baseShield, double absorptionRate){
     return baseShield * (1 + absorptionRate);
 }
 
-//Increments on true; resets to 0 and prints a warning on false. Returns current combo count.
+//combo function
 
 int registerCombo(bool hitSuccessful){
     static int comboCount = 0;
@@ -128,13 +124,13 @@ int registerCombo(bool hitSuccessful){
     }
     return comboCount;
 }
-
+//consuming mana
 void consumeMana(int manaCost){
     static int totalManaConsumed = 0;
     totalManaConsumed += manaCost;
     cout << "Total mana consumed this battle: " << totalManaConsumed << "\n";
 }
-
+//Ability to do more damage
 bool processBossRage(double damageDealt){
     static double totalDamageDealt = 0.0;
     totalDamageDealt += damageDealt;
@@ -144,7 +140,7 @@ bool processBossRage(double damageDealt){
     }
     return false;
 }
-//Adds expGained to totalXP. If totalXP >= wizardLevel * 100, increments wizardLevel and prints "LEVEL UP!". Returns the current level.
+//XP and levels function
 int gainWizardXP(int xpGained){
     static int totalXP = 0;
     static int wizardLevel = 1;
