@@ -9,34 +9,84 @@ double castSpell( string spellName = "Magic ball", int basePower = 2, double mul
 
 double calculateShield(double baseShield = 15, double absorptionRate = 0.2);
 
+int registerCombo(bool hitSuccessful);
 
+void consumeMana(int manaCost = 5);
 
+bool processBossRage(double damageDealt);
 
-
-
-
-
+int gainWizardXP(int xpGained = 25);
 
 
 
 int main() {
-    cout << "=== ARENA WARM-UP: TESTING DEFAULT ARGUMENTS ===\n\n";
+    cout << "=== WIZARD ACADEMY BATTLE SIMULATOR ===\n\n";
 
-    // Call 1: Uses defaults for tier ("Novice") and chargeLevel (1)
-    displaySpellBanner("Magic Missile");
-    double dmg1 = castSpell(); // Uses all defaults: "Magic Missile", 10, 1.0
-    double ward1 = calculateShield(); // Uses defaults: 15.0, 0.20
-    cout << "Ward Absorbs: " << ward1 << " HP\n\n";
+    char continueBattle = 'y';
+    int turn = 1;
 
-    // Call 2: Fully customized spell call
-    displaySpellBanner("Inferno Fireball", "Master", 3);
-    double dmg2 = castSpell("Inferno Fireball", 35, 1.5);
-    double ward2 = calculateShield(30.0, 0.50);
-    cout << "Ward Absorbs: " << ward2 << " HP\n\n";
+    while (continueBattle == 'y' || continueBattle == 'Y') {
+        cout << "\n----------------------------------------\n";
+        cout << " TURN " << turn << "\n";
+        cout << "----------------------------------------\n";
 
+        int choice = 0;
+        cout << "Select Action:\n";
+        cout << "1) Quick Magic Missile (Default attack)\n";
+        cout << "2) Heavy Lightning Storm (Custom attack)\n";
+        cout << "3) Cast Defensive Barrier\n";
+        cout << "4) Miss Attack Intentionally\n";
+        cout << "Choice: ";
+        cin >> choice;
+
+        double damageDealt = 0.0;
+        bool successfulHit = false;
+
+        if (choice == 1) {
+            displaySpellBanner("Magic Missile");
+            damageDealt = castSpell(); // Uses default arguments
+            consumeMana();             // Uses default mana cost (5)
+            successfulHit = true;
+        } 
+        else if (choice == 2) {
+            displaySpellBanner("Lightning Storm", "Adept", 2);
+            damageDealt = castSpell("Lightning Storm", 30, 1.4);
+            consumeMana(15);           // Custom mana cost
+            successfulHit = true;
+        } 
+        else if (choice == 3) {
+            displaySpellBanner("Arcane Shield", "Novice", 1);
+            double shieldVal = calculateShield(20.0, 0.25);
+            cout << "Shield generated! Absorbs " << shieldVal << " incoming damage.\n";
+            consumeMana(8);
+            successfulHit = true;
+        } 
+        else {
+            cout << "Your attack missed completely!\n";
+            successfulHit = false;
+        }
+
+        // --- UPDATE PERSISTENT GAME STATE VIA STATIC FUNCTIONS ---
+        int currentCombo = registerCombo(successfulHit);
+        if (successfulHit) {
+            cout << "Current Combo Streak: " << currentCombo << "x\n";
+            gainWizardXP(30); // Award XP for hitting
+        }
+
+        // Check if boss enters enrage mode
+        bool isBossEnraged = processBossRage(damageDealt);
+        if (isBossEnraged) {
+            cout << "!!! WARNING: BOSS HAS ENTERED ENRAGE MODE !!!\n";
+        }
+
+        turn++;
+        cout << "\nEnd turn? Continue fighting? (y/n): ";
+        cin >> continueBattle;
+    }
+
+    cout << "\n=== BATTLE SIMULATION ENDED ===\n";
     return 0;
 }
-
 
 
 void displaySpellBanner( string spellName, string tier, int chargeLevel){
@@ -64,5 +114,50 @@ double calculateShield(double baseShield, double absorptionRate){
     cout << "Absorption Rate: " << absorptionRate << "\n";
     return baseShield * (1 + absorptionRate);
 }
+
+//Increments on true; resets to 0 and prints a warning on false. Returns current combo count.
+
+int registerCombo(bool hitSuccessful){
+    static int comboCount = 0;
+    if (hitSuccessful) {
+        comboCount++;
+    }   
+    else {
+        comboCount = 0;
+        cout << "Combo broken! You missed your spell!!!!!\n";
+    }
+    return comboCount;
+}
+
+void consumeMana(int manaCost){
+    static int totalManaConsumed = 0;
+    totalManaConsumed += manaCost;
+    cout << "Total mana consumed this battle: " << totalManaConsumed << "\n";
+}
+
+bool processBossRage(double damageDealt){
+    static double totalDamageDealt = 0.0;
+    totalDamageDealt += damageDealt;
+
+    if (totalDamageDealt >= 100.0) {
+        return true; 
+    }
+    return false;
+}
+//Adds expGained to totalXP. If totalXP >= wizardLevel * 100, increments wizardLevel and prints "LEVEL UP!". Returns the current level.
+int gainWizardXP(int xpGained){
+    static int totalXP = 0;
+    static int wizardLevel = 1;
+    totalXP += xpGained;
+    cout << "Total Wizard XP: " << totalXP << "\n";
+    if (totalXP >= wizardLevel * 100) {
+        wizardLevel++;
+        cout << "LEVEL UP!\n" << endl;
+    }
+    return wizardLevel;
+}
+
+
+
 
 
